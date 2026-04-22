@@ -51,6 +51,22 @@
 #include "dump1090.h"
 #include "sdr_ifile.h"
 
+#include <ctype.h>
+#include <string.h>
+
+int my_strcasecmp(const char *s1, const char *s2) {
+    unsigned char c1, c2;
+    while (*s1 && *s2) {
+        c1 = (unsigned char)tolower((unsigned char)*s1);
+        c2 = (unsigned char)tolower((unsigned char)*s2);
+        if (c1 != c2)
+            return c1 - c2;
+        s1++;
+        s2++;
+    }
+    return (unsigned char)*s1 - (unsigned char)*s2;
+}
+
 static struct {
     const char *filename;
     input_format_t input_format;
@@ -98,11 +114,11 @@ bool ifileHandleOption(int argc, char **argv, int *jptr)
         Modes.sdr_type = SDR_IFILE;
     } else if (!strcmp(argv[j],"--iformat") && more) {
         ++j;
-        if (!strcasecmp(argv[j], "uc8")) {
+        if (!my_strcasecmp(argv[j], "uc8")) {
             ifile.input_format = INPUT_UC8;
-        } else if (!strcasecmp(argv[j], "sc16")) {
+        } else if (!my_strcasecmp(argv[j], "sc16")) {
             ifile.input_format = INPUT_SC16;
-        } else if (!strcasecmp(argv[j], "sc16q11")) {
+        } else if (!my_strcasecmp(argv[j], "sc16q11")) {
             ifile.input_format = INPUT_SC16Q11;
         } else {
             fprintf(stderr, "Input format '%s' not understood (supported values: UC8, SC16, SC16Q11)\n",

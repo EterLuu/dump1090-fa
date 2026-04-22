@@ -34,6 +34,23 @@
 #  include "sdr_limesdr.h"
 #endif
 
+
+#include <ctype.h>
+#include <string.h>
+
+int my_2_strcasecmp(const char *s1, const char *s2) {
+    unsigned char c1, c2;
+    while (*s1 && *s2) {
+        c1 = (unsigned char)tolower((unsigned char)*s1);
+        c2 = (unsigned char)tolower((unsigned char)*s2);
+        if (c1 != c2)
+            return c1 - c2;
+        s1++;
+        s2++;
+    }
+    return (unsigned char)*s1 - (unsigned char)*s2;
+}
+
 typedef struct {
     const char *name;
     sdr_type_t sdr_type;
@@ -162,7 +179,7 @@ bool sdrHandleOption(int argc, char **argv, int *jptr)
         if ((j+1) < argc) {
             ++j;
             for (int i = 0; sdr_handlers[i].name; ++i) {
-                if (!strcasecmp(sdr_handlers[i].name, argv[j])) {
+                if (!my_2_strcasecmp(sdr_handlers[i].name, argv[j])) {
                     Modes.sdr_type = sdr_handlers[i].sdr_type;
                     *jptr = j;
                     return true;
